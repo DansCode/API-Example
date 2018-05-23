@@ -4,16 +4,15 @@ include_once("Slim/Slim.php");
 require "NotORM.php";
 $app = new \Slim\Slim();
 
-require('../config/vi-config.php');
-require_once('stripe-test/init.php');
+require('config.php');
+require_once('init.php');
 
-//\Stripe\Stripe::setApiKey('sk_test_mW5NQKvAzUJyEoD1NC1jLK5o');
 \Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
 
-require_once('../notifier/android_notify.php');
-$android_obj = new andriod_push();
+require_once('../anotify.php');
+$android_obj = new android_push();
 
-require_once('../notifier/iphone_notify.php');
+require_once('../inotify.php');
 $iphone_obj = new iphone_push();
 
 
@@ -21,8 +20,8 @@ $iphone_obj = new iphone_push();
 
 function getConnection() {
     try {
-//        $db_username = "herodb";
-  //      $db_password = "Admin123!@#";
+//        $db_username = "db";
+  //      $db_password = "admin";
     //    $conn = new PDO('mysql:host=localhost;dbname=hero_app', $db_username, $db_password);
         $conn = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
 
@@ -43,13 +42,13 @@ function netAmount($amount){
 	return $net_amount;
 }
 
-function sendNotification($consumer_id,$provider_id,$message,$title,$action,$request_id = ''){
+function sendNotification($consumer_id,$p_id,$message,$title,$action,$request_id = ''){
 
 	global $android_obj,$iphone_obj;
 	$request_id = (int)$request_id;
 
 
-    $sql_query = "SELECT user_id,device_id,device_type,user_type FROM app_users WHERE user_id IN  ('".$consumer_id."','".$provider_id."') AND device_id != '' ";
+    $sql_query = "SELECT user_id,device_id,device_type,user_type FROM app_users WHERE user_id IN  ('".$consumer_id."','".$p_id."') AND device_id != '' ";
  	//echo $sql_query;
 	//die;
     try {
@@ -58,14 +57,6 @@ function sendNotification($consumer_id,$provider_id,$message,$title,$action,$req
         $user_array  = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 		if(!empty($user_array)){
-
-
-
-
-
-
-
-
   ...
   ...
 
